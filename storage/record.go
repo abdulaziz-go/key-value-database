@@ -3,6 +3,7 @@ package storage
 import (
 	"encoding/binary"
 	"errors"
+	"time"
 )
 
 type Record struct {
@@ -11,6 +12,14 @@ type Record struct {
 	Value     []byte
 	Offset    int64
 	Size      int64
+}
+
+func NewRecord(key string, value []byte) *Record {
+	return &Record{
+		Timestamp: time.Now().UnixNano(),
+		Key:       key,
+		Value:     value,
+	}
 }
 
 type RecordHeader struct {

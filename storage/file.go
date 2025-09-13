@@ -94,3 +94,7 @@ func (lf *LogFile) ReadAll() ([]*Record, error) {
 
 	return records, nil
 }
+
+func (lf *LogFile) Close() error {
+	return lf.file.Close()
+}
