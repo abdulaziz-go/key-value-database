@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	bc, err := bitcask.Open("")
+	bc, err := bitcask.Open("log")
 	if err != nil {
 		fmt.Printf("BitCask ochishda xatolik: %v\n", err)
 		return
