@@ -87,12 +87,12 @@ func (bc *BitCask) Delete(key string) error {
 		return errors.New("key not found")
 	}
 
-	record := storage.NewRecord(key, []byte{})
+	//record := storage.NewRecord(key, []byte{})
 
-	err := bc.logManager.Write(record)
-	if err != nil {
-		return fmt.Errorf("failed to write delete record: %v", err)
-	}
+	//err := bc.logManager.Write(record)
+	//if err != nil {
+	//	return fmt.Errorf("failed to write delete record: %v", err)
+	//}
 
 	bc.keyDir.Delete(key)
 	return nil
