@@ -1,12 +1,22 @@
 package storage
 
-import "errors"
+import (
+	"encoding/binary"
+	"errors"
+)
 
 type Record struct {
 	Timestamp int64 // 8 byte
 	Key       string
 	Value     []byte
+	Offset    int64
 	Size      int64
+}
+
+type RecordHeader struct {
+	Timestamp int64
+	KeySize   int32
+	ValueSize int32
 }
 
 func (r *Record) Encode() []byte {
@@ -55,8 +65,8 @@ func (r *Record) Encode() []byte {
 	return buf
 }
 
-func (r *Record) Decoder(data []byte) (*Record, error) {
-	if len(data) > 16 {
+func Decoder(data []byte, offset int64) (*Record, error) {
+	if len(data) < 16 {
 		return nil, errors.New("timestamp , keysize and value size mismatch")
 	}
 
@@ -96,7 +106,22 @@ func (r *Record) Decoder(data []byte) (*Record, error) {
 		Timestamp: timestamp,
 		Key:       key,
 		Value:     value,
+		Offset:    offset,
 		Size:      int64(16 + keySize + valueSize),
 	}
 	return record, nil
+}
+
+func DecodeHeader(data []byte) (*RecordHeader, error) {
+	if len(data) < 16 {
+		return nil, errors.New("length mismatch decode header")
+	}
+
+	header := &RecordHeader{
+		Timestamp: int64(binary.BigEndian.Uint64(data[0:8])),
+		KeySize:   int32(binary.BigEndian.Uint32(data[8:12])),
+		ValueSize: int32(binary.BigEndian.Uint32(data[12:16])),
+	}
+
+	return header, nil
 }
